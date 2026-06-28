@@ -4,6 +4,49 @@
  */
 
 const settings = {
+    getCurrentLocation(){
+
+    if(!navigator.geolocation){
+
+        toast.error(
+            "Browser tidak mendukung GPS"
+        );
+
+        return;
+
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        (position)=>{
+
+            document.getElementById(
+                "office-latitude"
+            ).value =
+            position.coords.latitude;
+
+            document.getElementById(
+                "office-longitude"
+            ).value =
+            position.coords.longitude;
+
+            toast.success(
+                "Lokasi berhasil diambil"
+            );
+
+        },
+
+        ()=>{
+
+            toast.error(
+                "Tidak dapat mengambil lokasi"
+            );
+
+        }
+
+    );
+
+}
     shifts: [],
 
     async init() {
@@ -50,8 +93,84 @@ const settings = {
                     if (el) el.checked = workdays[day] !== false;
                 });
             }
+const officeLatitude =
+    document.getElementById("office-latitude");
+
+const officeLongitude =
+    document.getElementById("office-longitude");
+
+const officeRadius =
+    document.getElementById("office-radius");
+
+if (officeLatitude)
+    officeLatitude.value =
+        allSettings.office_latitude || "";
+
+if (officeLongitude)
+    officeLongitude.value =
+        allSettings.office_longitude || "";
+
+if (officeRadius)
+    officeRadius.value =
+        allSettings.office_radius || 100;
 
             // System settings
+<div class="settings-card">
+
+    <h3>Lokasi Kantor (Geofence)</h3>
+
+    <div class="form-group">
+        <label>Latitude</label>
+        <input
+            type="number"
+            id="office-latitude"
+            step="0.000001">
+    </div>
+
+    <div class="form-group">
+        <label>Longitude</label>
+        <input
+            type="number"
+            id="office-longitude"
+            step="0.000001">
+    </div>
+
+    <div class="form-group">
+        <label>Radius Absensi (Meter)</label>
+        <input
+            type="number"
+            id="office-radius">
+    </div>
+
+    <button
+        type="button"
+        id="btn-get-location"
+        class="btn btn-primary">
+
+        Ambil Lokasi Saat Ini
+
+    </button>
+
+</div>
+            if(
+
+    officeLatitude.value==="" ||
+
+    officeLongitude.value==="" ||
+
+    officeRadius.value===""
+
+){
+
+    toast.error(
+
+        "Lokasi kantor belum lengkap."
+
+    );
+
+    return;
+
+}
             if (allSettings.late_tolerance !== undefined) {
                 const el = document.getElementById('setting-late-tolerance');
                 if (el) el.value = allSettings.late_tolerance;
@@ -126,6 +245,20 @@ const settings = {
         if (saveSystemBtn) {
             saveSystemBtn.addEventListener('click', () => this.saveSystemSettings());
         }
+
+    const btnGetLocation =
+        document.getElementById("btn-get-location");
+
+    if(btnGetLocation){
+
+        btnGetLocation.addEventListener(
+
+            "click",
+
+            () => this.getCurrentLocation()
+
+        );
+
     },
 
     async saveCompany(e) {
@@ -167,15 +300,49 @@ const settings = {
     },
 
     async saveSystemSettings() {
-        const lateTolerance = document.getElementById('setting-late-tolerance');
-        const faceRecognition = document.getElementById('setting-face-recognition');
-        const locationTracking = document.getElementById('setting-location-tracking');
+        const officeLatitude =
+            document.getElementById("office-latitude");
+
+        const officeLongitude =
+            document.getElementById("office-longitude");
+
+        const officeRadius =
+            document.getElementById("office-radius");
 
         try {
             await Promise.all([
-                api.saveSetting('late_tolerance', lateTolerance ? lateTolerance.value : '15'),
-                api.saveSetting('face_recognition', faceRecognition ? String(faceRecognition.checked) : 'true'),
-                api.saveSetting('location_tracking', locationTracking ? String(locationTracking.checked) : 'true')
+            await Promise.all([
+
+                api.saveSetting(
+                    "late_tolerance",
+                    lateTolerance.value
+                ),
+
+                api.saveSetting(
+                    "face_recognition",
+                    String(faceRecognition.checked)
+                ),
+
+                api.saveSetting(
+                    "location_tracking",
+                    String(locationTracking.checked)
+                ),
+
+                api.saveSetting(
+                   "office_latitude",
+                   officeLatitude.value
+                ),
+
+                api.saveSetting(
+                   "office_longitude",
+                   officeLongitude.value
+                ),
+
+                api.saveSetting(
+                   "office_radius",
+                   officeRadius.value
+                )
+
             ]);
             toast.success('Pengaturan sistem berhasil disimpan!');
         } catch (error) {
