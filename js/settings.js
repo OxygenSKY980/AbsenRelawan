@@ -93,26 +93,26 @@ const settings = {
                     if (el) el.checked = workdays[day] !== false;
                 });
             }
-const officeLatitude =
-    document.getElementById("office-latitude");
+            const officeLatitude =
+                document.getElementById("office-latitude");
 
-const officeLongitude =
-    document.getElementById("office-longitude");
+            const officeLongitude =
+                document.getElementById("office-longitude");
 
-const officeRadius =
-    document.getElementById("office-radius");
+            const officeRadius =
+                document.getElementById("office-radius");
 
-if (officeLatitude)
-    officeLatitude.value =
-        allSettings.office_latitude || "";
+            if (officeLatitude)
+                officeLatitude.value =
+                    allSettings.office_latitude || "";
 
-if (officeLongitude)
-    officeLongitude.value =
-        allSettings.office_longitude || "";
+            if (officeLongitude)
+                officeLongitude.value =
+                    allSettings.office_longitude || "";
 
-if (officeRadius)
-    officeRadius.value =
-        allSettings.office_radius || 100;
+            if (officeRadius)
+                officeRadius.value =
+                    allSettings.office_radius || 20;
 
             // System settings
 <div class="settings-card">
